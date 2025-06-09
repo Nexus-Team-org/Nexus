@@ -1,10 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import shell from 'shelljs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { join, resolve, basename } from 'path';
+import fs from 'fs-extra';
 
 export function NewCommand(): Command {
   const command = new Command('new')
@@ -12,65 +10,72 @@ export function NewCommand(): Command {
     .argument('<name>', 'Name of the application')
     .action((name: string) => {
       console.log(chalk.green(`Creating new Nexus application: ${name}`));
-      
-      // Create project directory
-      if (shell.test('-d', name)) {
-        console.error(chalk.red(`Error: Directory ${name} already exists`));
+
+      // Resolve template and target paths
+      const currentFile = new URL(import.meta.url).pathname;
+      const currentDir = resolve(currentFile, '..');
+      const templatePath = resolve(currentDir, '../../../../template');
+      const targetPath = name === '.' ? process.cwd() : resolve(process.cwd(), name);
+
+      // Check if target directory exists and is empty
+      if (fs.existsSync(targetPath)) {
+        if (name === '.') {
+          // For current directory, check if it's empty
+          const files = fs.readdirSync(targetPath);
+          if (files.length > 0) {
+            console.error(chalk.red(`Error: Current directory is not empty`));
+            process.exit(1);
+          }
+        } else {
+          console.error(chalk.red(`Error: Directory ${name} already exists`));
+          process.exit(1);
+        }
+      }
+
+      console.log(chalk.blue('Copying template files...'));
+
+      // Copy template files
+      try {
+        fs.copySync(templatePath, targetPath, {
+          overwrite: false,
+          errorOnExist: true,
+          preserveTimestamps: true,
+        });
+
+        // Update package.json name
+        const packageJsonPath = join(targetPath, 'package.json');
+        if (fs.existsSync(packageJsonPath)) {
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+          packageJson.name = name === '.' ? basename(process.cwd()) : name;
+          fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+        }
+      } catch (error) {
+        console.error(
+          chalk.red(
+            `Error copying template files: ${
+              error instanceof Error ? error.message : String(error)
+            }`
+          )
+        );
         process.exit(1);
       }
 
-      shell.mkdir('-p', name);
-      
-      // Initialize package.json
-      shell.cd(name);
-      shell.exec('npm init -y');
-      
+      // Change to the project directory
+      process.chdir(targetPath);
+
       // Install dependencies
       console.log(chalk.blue('Installing dependencies...'));
-      shell.exec('npm install react react-dom typescript @types/react @types/react-dom @nexus/core --save');
-      shell.exec('npm install @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint typescript --save-dev');
-      
-      // Create basic project structure
-      shell.mkdir('-p', 'src/{components,pages,services,styles}');
-      
-      // Create tsconfig.json
-      const tsconfig = {
-        compilerOptions: {
-          target: 'es5',
-          lib: ['dom', 'dom.iterable', 'esnext'],
-          allowJs: true,
-          skipLibCheck: true,
-          esModuleInterop: true,
-          allowSyntheticDefaultImports: true,
-          strict: true,
-          forceConsistentCasingInFileNames: true,
-          noFallthroughCasesInSwitch: true,
-          module: 'esnext',
-          moduleResolution: 'node',
-          resolveJsonModule: true,
-          isolatedModules: true,
-          noEmit: true,
-          jsx: 'react-jsx',
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true
-        },
-        include: ['src']
-      };
-      
-      shell.ShellString(JSON.stringify(tsconfig, null, 2)).to('tsconfig.json');
-      
-      // Create basic files
-      shell.ShellString('<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <title>Nexus App</title>\n  </head>\n  <body>\n    <div id="root"></div>\n  </body>\n</html>').to('public/index.html');
-      
-      shell.ShellString('import React from "react";\nimport ReactDOM from "react-dom";\nimport { App } from "./App";\n\nReactDOM.render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n  document.getElementById("root")\n);').to('src/index.tsx');
-      
-      shell.ShellString('import React from "react";\nimport { Component } from "@nexus/core";\n\n@Component({\n  selector: "app-root",\n  template: `\n    <div>\n      <h1>Welcome to Nexus</h1>\n      <p>Start editing to see some magic happen!</p>\n    </div>\n  `\n})\nexport class App extends React.Component {\n  render() {\n    return null; // Template is handled by the decorator\n  }\n}').to('src/App.tsx');
-      
+      const installCmd = shell.exec('npm install');
+      if (installCmd.code !== 0) {
+        console.error(chalk.red('Error installing dependencies'));
+        process.exit(1);
+      }
+
       console.log(chalk.green(`\n✅ Success! Created ${name} at ${join(process.cwd(), name)}`));
       console.log('\nTo get started, run:');
       console.log(`  cd ${name}`);
       console.log('  npm start\n');
     });
-  
+
   return command;
 }

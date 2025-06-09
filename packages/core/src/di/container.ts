@@ -126,7 +126,7 @@ export class Container {
       
       if ('useValue' in safeProvider) {
         instance = safeProvider.useValue as T;
-      } else if ('useFactory' in safeProvider) {
+      } else if ('useFactory' in safeProvider && safeProvider.useFactory) {
         const deps = safeProvider.deps?.map(dep => this.resolve(dep)) || [];
         instance = safeProvider.useFactory(...deps) as T;
       } else {

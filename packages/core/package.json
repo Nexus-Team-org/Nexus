@@ -1,5 +1,5 @@
 {
-  "name": "@nexus/core",
+  "name": "@nexus-dev/core",
   "version": "0.1.0",
   "description": "Core functionality for Nexus React framework",
   "type": "module",
@@ -61,12 +61,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/nexus/tree/main/packages/core"
+    "url": "https://github.com/AnasEchoFanani/Nexus.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/nexus/issues"
+    "url": "https://github.com/AnasEchoFanani/Nexus/issues"
   },
-  "author": "",
+  "author": "Nexus",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

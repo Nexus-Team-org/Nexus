@@ -1,6 +1,6 @@
 # Nexus
 
-Nexus is a modern framework that brings Angular-like features to React, including decorators, dependency injection, and a powerful CLI, built with TypeScript and ES modules.
+Nexus is a modern framework that brings Angular-like features to React, including decorators, dependency injection, and a powerful CLI, built with TypeScript and ES modules. It provides a structured way to build scalable React applications with a familiar Angular-like development experience.
 
 ## Features
 
@@ -16,42 +16,69 @@ Nexus is a modern framework that brings Angular-like features to React, includin
 - Node.js 18+ (LTS recommended)
 - npm 9+ or yarn 1.22+
 - TypeScript 5.0+
+- Git (for version control)
 
 ## Getting Started
 
 ### Installation
 
-Install the Nexus CLI globally using npm:
+#### Using npx (recommended)
 
 ```bash
-npm install -g @nexus/cli
-```
-
-Or using yarn:
-
-```bash
-yarn global add @nexus/cli
-```
-
-### Create a New Application
-
-```bash
-# Create a new application
-nexus new my-app
+npx @nexus-dev/cli new my-app
 cd my-app
+npm install
+npm start
+```
+
+#### Local Development Setup
+
+If you want to contribute to Nexus or use the latest development version:
+
+```bash
+# Clone the repository
+git clone https://github.com/AnasEchoFanani/Nexus.git
+cd Nexus
 
 # Install dependencies
-npm install  # or yarn
+npm install
 
-# Start the development server
-npm start    # or yarn start
+# Build all packages
+npm run build
+
+# Create a new application using the local CLI
+node packages/cli/dist/index.js new my-app
+cd my-app
+npm install
+npm start
 ```
 
-## Project Structure
+### Project Structure
 
-A typical Nexus application has the following structure:
+When you create a new Nexus application, you'll get the following structure:
 
+```bash
+my-app/
+├── public/                  # Static files
+│   └── index.html           # Main HTML template
+├── src/
+│   ├── components/         # Shared components
+│   ├── pages/               # Page components
+│   ├── services/            # Services with @Injectable
+│   ├── styles/              # Global styles
+│   ├── App.tsx              # Root component
+│   └── index.tsx            # Application entry point
+├── .gitignore
+├── package.json
+├── tsconfig.json            # TypeScript configuration
+└── vite.config.ts           # Vite configuration
 ```
+
+## Example Application Structure
+
+Here's an example of how you might structure a typical Nexus application. This shows the internal structure of the `src` directory:
+
+```bash
 my-app/
 ├── src/
 │   ├── app/
@@ -153,15 +180,16 @@ nexus generate view Dashboard --route=/dashboard
 
 ### Project Structure
 
-```
+```bash
 nexus/
-├── packages/
-│   ├── cli/              # Nexus CLI tool
-│   └── core/             # Core framework
-├── examples/             # Example applications
-├── .eslintrc.json       # ESLint configuration
-├── .prettierrc          # Prettier configuration
-└── tsconfig.json        # TypeScript configuration
+├── packages/            # Source code packages
+│   ├── cli/            # Nexus CLI tool
+│   └── core/           # Core framework
+├── template/           # Project template for 'nexus new'
+├── examples/           # Example applications
+├── .eslintrc.json     # ESLint configuration
+├── .prettierrc        # Prettier configuration
+└── tsconfig.json      # TypeScript configuration
 ```
 
 ### Available Scripts
