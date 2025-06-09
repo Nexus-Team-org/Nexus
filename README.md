@@ -22,35 +22,33 @@ Nexus is a modern framework that brings Angular-like features to React, includin
 
 ### Installation
 
-#### Using npx (recommended)
+#### Option 1: Global Installation (Recommended)
+
+Install the Nexus CLI globally to use it from anywhere:
 
 ```bash
+npm install -g @nexus-dev/cli
+
+# Verify installation
+nexus --version
+
+# Create a new application
+nexus new my-app
+cd my-app
+npm install
+npm run dev
+```
+
+#### Option 2: Using npx (No Installation)
+
+If you prefer not to install globally, you can use npx:
+
+```bash
+# Create a new application without global installation
 npx @nexus-dev/cli new my-app
 cd my-app
 npm install
-npm start
-```
-
-#### Local Development Setup
-
-If you want to contribute to Nexus or use the latest development version:
-
-```bash
-# Clone the repository
-git clone https://github.com/AnasEchoFanani/Nexus.git
-cd Nexus
-
-# Install dependencies
-npm install
-
-# Build all packages
-npm run build
-
-# Create a new application using the local CLI
-node packages/cli/dist/index.js new my-app
-cd my-app
-npm install
-npm start
+npm run dev
 ```
 
 ### Project Structure
@@ -74,27 +72,6 @@ my-app/
 └── vite.config.ts           # Vite configuration
 ```
 
-## Example Application Structure
-
-Here's an example of how you might structure a typical Nexus application. This shows the internal structure of the `src` directory:
-
-```bash
-my-app/
-├── src/
-│   ├── app/
-│   │   ├── app.module.ts      # Root module
-│   │   └── app.routes.ts      # Application routes
-│   ├── components/           # Shared components
-│   ├── pages/                # Page components
-│   ├── services/             # Services with @Injectable
-│   └── styles/              # Global styles
-├── public/                  # Static files
-├── package.json
-└── tsconfig.json
-```
-
-## Core Concepts
-
 ### Components
 
 ```typescript
@@ -108,12 +85,12 @@ import { Component } from '@nexus/core';
       <h2>{{ user.name }}</h2>
       <p>{{ user.email }}</p>
     </div>
-  `
+  `,
 })
 export class UserProfile extends React.Component {
   user = {
     name: 'John Doe',
-    email: 'john@example.com'
+    email: 'john@example.com',
   };
 
   render() {
@@ -131,7 +108,7 @@ import { Injectable } from '@nexus/core';
 export class UserService {
   private users = [
     { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' }
+    { id: 2, name: 'Jane Smith' },
   ];
 
   getUsers() {
@@ -139,7 +116,7 @@ export class UserService {
   }
 
   getUser(id: number) {
-    return this.users.find(user => user.id === id);
+    return this.users.find((user) => user.id === id);
   }
 }
 ```
@@ -153,7 +130,7 @@ import { UserService } from './user.service';
 
 @Module({
   declarations: [UserProfile],
-  providers: [UserService]
+  providers: [UserService],
 })
 export class UserModule {}
 ```
@@ -164,94 +141,20 @@ Generate different parts of your application:
 
 ```bash
 # Generate a component
-nexus generate component UserProfile
+nexus g component UserProfile
 
 # Generate a service
-nexus generate service UserService
+nexus g service UserService
 
 # Generate a module
-nexus generate module User
+nexus g module User
 
 # Generate a view with routing
+nexus g view Dashboard --route=/dashboard
+
+# Alternative full command
 nexus generate view Dashboard --route=/dashboard
 ```
-
-## Development
-
-### Project Structure
-
-```bash
-nexus/
-├── packages/            # Source code packages
-│   ├── cli/            # Nexus CLI tool
-│   └── core/           # Core framework
-├── template/           # Project template for 'nexus new'
-├── examples/           # Example applications
-├── .eslintrc.json     # ESLint configuration
-├── .prettierrc        # Prettier configuration
-└── tsconfig.json      # TypeScript configuration
-```
-
-### Available Scripts
-
-- `npm run build` - Build all packages
-- `npm run dev` - Watch for changes and rebuild
-- `npm test` - Run tests
-- `npm run lint` - Lint the codebase
-- `npm run format` - Format the code
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
-
-## Local Development
-
-If you want to contribute to the framework itself:
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/nexus.git
-cd nexus
-
-# Install dependencies
-npm install
-
-# Build all packages
-npm run build
-
-# Link the CLI for local development
-cd packages/cli
-npm link
-```
-
-Now you can use the locally linked CLI to test your changes:
-
-```bash
-# Create a test app
-nexus new test-app
-cd test-app
-npm install
-npm start
-```
-
-## Publishing to npm
-
-If you're a maintainer, follow these steps to publish a new version:
-
-1. Update the version in `package.json`
-2. Update the changelog
-3. Commit changes with `git commit -am "chore: release vX.Y.Z"`
-4. Create a git tag: `git tag vX.Y.Z`
-5. Push changes: `git push && git push --tags`
-6. Publish to npm: `npm publish --access public`
-
-## Documentation
-
-For detailed documentation, please visit [Nexus Documentation](https://nexusjs.org/docs).
-
-## Support
-
-For support, please open an issue in our [GitHub repository](https://github.com/your-username/nexus).
 
 ## License
 
