@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    /* Base Options */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nexus/*": ["packages/*/src"],
+      "@nexus/cli": ["packages/cli/src"],
+      "@nexus/core": ["packages/core/src"]
+    },
+    "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types"],
+    "outDir": "dist",
+    "rootDir": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
+  },
+  "exclude": [
+    "**/node_modules",
+    "**/dist",
+    "**/build",
+    "**/coverage",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__",
+    "**/__mocks__"
+  ],
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "packages/**/*.d.ts",
+    "packages/**/*.json"
+  ],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/cli" }
+  ]
+}

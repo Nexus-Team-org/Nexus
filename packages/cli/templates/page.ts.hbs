@@ -1,0 +1,30 @@
+import React from 'react';
+import { Component } from '@nexus/core';
+
+interface {{pascalCase name}}Props {
+  // Add your prop types here
+}
+
+@Component({
+  selector: 'app-{{kebabCase name}}',
+  template: `
+    <div className="{{kebabCase name}}-page">
+      <h1>{{properCase name}} Page</h1>
+      <!-- Add your page content here -->
+    </div>
+  `,
+  styles: `
+    .{{kebabCase name}}-page {
+      padding: 2rem;
+    }
+  `
+})
+export class {{pascalCase name}}Page extends React.Component<{{pascalCase name}}Props> {
+  // Add your component logic here
+  
+  render() {
+    return this.template();
+  }
+}
+
+export default {{pascalCase name}}Page;
