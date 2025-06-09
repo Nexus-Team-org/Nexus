@@ -1,159 +1,160 @@
-# Nexus CLI
+# Nexus
 
-The Nexus CLI is a powerful command-line tool for quickly scaffolding and managing Nexus React applications with a modern, opinionated stack.
+Nexus is a modern framework that brings Angular-like features to React, including decorators, dependency injection, and a powerful CLI, built with TypeScript and ES modules. It provides a structured way to build scalable React applications with a familiar Angular-like development experience.
 
 ## Features
 
-- 🚀 Create production-ready React applications with a single command
-- 🎨 Pre-configured with best practices and modern tooling
-- ⚡ Built with Vite for lightning-fast development
-- 🎯 TypeScript-first development
-- 🎨 Tailwind CSS for styling
-- 🔄 State management with Redux Toolkit & React Query
-- 🛣️ React Router for routing
-- 🛠️ ESLint and Prettier for code quality
+- **Component Decorators**: Use `@Component` to define your React components with templates
+- **Dependency Injection**: Built-in DI container with `@Injectable` decorator
+- **Module System**: Organize your application with `@Module`
+- **CLI Tools**: Generate components, services, and more with the Nexus CLI
+- **TypeScript First**: Built with TypeScript for better developer experience
+- **ES Modules**: Modern JavaScript modules for better tree-shaking and performance
 
-## Quick Start
+## Prerequisites
 
-Create a new Nexus application:
+- Node.js 18+ (LTS recommended)
+- npm 9+ or yarn 1.22+
+- TypeScript 5.0+
+- Git (for version control)
+
+## Getting Started
+
+### Installation
+
+#### Option 1: Global Installation (Recommended)
+
+Install the Nexus CLI globally to use it from anywhere:
 
 ```bash
-# Using npm
-npx @nexus/cli new my-app
+npm install -g @nexus-dev/cli
 
-# Using yarn
-yarn create @nexus my-app
+# Verify installation
+nexus --version
 
-# Using pnpm
-pnpm create @nexus my-app
+# Create a new application
+nexus new my-app
+cd my-app
+npm install
+npm run dev
 ```
 
-Then follow the prompts to set up your project.
+#### Option 2: Using npx (No Installation)
 
-## Project Structure
+If you prefer not to install globally, you can use npx:
 
+```bash
+# Create a new application without global installation
+npx @nexus-dev/cli new my-app
+cd my-app
+npm install
+npm run dev
 ```
+
+### Project Structure
+
+When you create a new Nexus application, you'll get the following structure:
+
+```bash
 my-app/
-├── public/               # Static files
+├── public/                  # Static files
+│   └── index.html           # Main HTML template
 ├── src/
-│   ├── app/             # App-wide configurations and providers
-│   ├── assets/           # Static assets (images, fonts, etc.)
-│   ├── components/       # Reusable UI components
-│   ├── features/         # Feature-based modules
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Third-party library configurations
-│   ├── pages/            # Page components
-│   ├── routes/           # Route configurations
-│   ├── types/            # TypeScript type definitions
-│   ├── utils/            # Utility functions
-│   ├── App.tsx           # Root component
-│   ├── main.tsx          # Application entry point
-│   └── index.css         # Global styles
+│   ├── components/         # Shared components
+│   ├── pages/               # Page components
+│   ├── services/            # Services with @Injectable
+│   ├── styles/              # Global styles
+│   ├── App.tsx              # Root component
+│   └── index.tsx            # Application entry point
 ├── .gitignore
-├── components.json       # UI components configuration
-├── eslint.config.js      # ESLint configuration
 ├── package.json
-├── README.md
-├── tailwind.config.js    # Tailwind CSS configuration
-├── tsconfig.json         # TypeScript configuration
-└── vite.config.ts        # Vite configuration
+├── tsconfig.json            # TypeScript configuration
+└── vite.config.ts           # Vite configuration
 ```
 
-## Available Scripts
+### Components
 
-In the project directory, you can run:
+```typescript
+import React from 'react';
+import { Component } from '@nexus/core';
 
-### `npm run dev` or `yarn dev`
+@Component({
+  selector: 'app-user-profile',
+  template: `
+    <div>
+      <h2>{{ user.name }}</h2>
+      <p>{{ user.email }}</p>
+    </div>
+  `,
+})
+export class UserProfile extends React.Component {
+  user = {
+    name: 'John Doe',
+    email: 'john@example.com',
+  };
 
-Runs the app in development mode. Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
-
-The page will reload when you make changes.
-
-### `npm run build` or `yarn build`
-
-Builds the app for production to the `dist` folder.
-
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-### `npm run lint` or `yarn lint`
-
-Runs ESLint to check for code quality issues.
-
-### `npm run preview` or `yarn preview`
-
-Previews the production build locally.
-
-## Tech Stack
-
-- [React 19](https://react.dev/) - UI library
-- [TypeScript](https://www.typescriptlang.org/) - Type checking
-- [Vite](https://vitejs.dev/) - Build tool and dev server
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Redux Toolkit](https://redux-toolkit.js.org/) - State management
-- [React Query](https://tanstack.com/query/latest) - Data fetching and caching
-- [React Router](https://reactrouter.com/) - Routing
-- [ESLint](https://eslint.org/) - Code linting
-- [Prettier](https://prettier.io/) - Code formatting
-
-## Customization
-
-### Adding Environment Variables
-
-1. Create a `.env` file in the root directory
-2. Add environment variables starting with `VITE_` to make them available to your React app
-
-Example:
-```env
-VITE_API_URL=https://api.example.com
-VITE_APP_NAME=My App
+  render() {
+    return null; // Template is handled by the decorator
+  }
+}
 ```
 
-### Adding a New Page
+### Services
 
-1. Create a new file in `src/pages` (e.g., `About.tsx`)
-2. Add a route in `src/routes/index.tsx`
+```typescript
+import { Injectable } from '@nexus/core';
 
-### Adding a New Component
+@Injectable()
+export class UserService {
+  private users = [
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' },
+  ];
 
-1. Create a new file in `src/components` (e.g., `Button.tsx`)
-2. Import and use it in your pages or other components
+  getUsers() {
+    return this.users;
+  }
 
-## Deployment
+  getUser(id: number) {
+    return this.users.find((user) => user.id === id);
+  }
+}
+```
 
-### Building for Production
+### Modules
+
+```typescript
+import { Module } from '@nexus/core';
+import { UserProfile } from './user-profile.component';
+import { UserService } from './user.service';
+
+@Module({
+  declarations: [UserProfile],
+  providers: [UserService],
+})
+export class UserModule {}
+```
+
+## CLI Commands
+
+Generate different parts of your application:
 
 ```bash
-npm run build
+# Generate a component
+nexus g component UserProfile
+
+# Generate a service
+nexus g service UserService
+
+# Generate a module
+nexus g module User
+
+# Generate a view with routing
+nexus g view Dashboard --route=/dashboard
+
+# Alternative full command
+nexus generate view Dashboard --route=/dashboard
 ```
-
-This will create a `dist` directory with the production build of your app.
-
-### Deploying to Vercel
-
-[Vercel](https://vercel.com/) is the easiest way to deploy your Nexus app.
-
-1. Push your code to a Git repository
-2. Import the repository on Vercel
-3. Vercel will automatically detect the project and deploy it
-
-### Deploying to Netlify
-
-1. Install the Netlify CLI:
-   ```bash
-   npm install -g netlify-cli
-   ```
-2. Build your project:
-   ```bash
-   npm run build
-   ```
-3. Deploy:
-   ```bash
-   netlify deploy --prod
-   ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
