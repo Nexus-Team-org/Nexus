@@ -11,8 +11,11 @@ const __dirname = dirname(__filename);
 handlebars.registerHelper('camelCase', (str: string) => changeCase.camelCase(str));
 handlebars.registerHelper('kebabCase', (str: string) => changeCase.paramCase(str));
 handlebars.registerHelper('pascalCase', (str: string) => changeCase.pascalCase(str));
-handlebars.registerHelper('properCase', (str: string) => 
-  str.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+handlebars.registerHelper('properCase', (str: string) =>
+  str
+    .split('-')
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(' ')
 );
 
 export async function generateFromTemplate(
@@ -24,13 +27,13 @@ export async function generateFromTemplate(
   const templateContent = readFileSync(templatePath, 'utf-8');
   const template = handlebars.compile(templateContent);
   const result = template({ ...data, name: data.name });
-  
+
   // Ensure directory exists
   const dir = dirname(outputPath);
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
-  
+
   writeFileSync(outputPath, result, 'utf-8');
 }
 
