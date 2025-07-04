@@ -58,13 +58,13 @@ Creating a new page: ${name}
           const dirPath = join(pagesDir, dir);
           if (fs.existsSync(dirPath)) {
             fs.mkdirSync(join(dirPath, name));
-            const filePath = join(dirPath, name, `${name}.tsx`);
+            const filePath = join(dirPath, name, 'index.tsx');
             fs.writeFileSync(filePath, `// ${name} file in ${dir}\n`, 'utf-8');
           }
         });
 
-        // Create the main page file
-        const pageFilePath = join(targetPath, `${name}.tsx`);
+        // Create the main page file (index.tsx)
+        const pageFilePath = join(targetPath, 'index.tsx');
         fs.writeFileSync(pageFilePath, `
 import React from 'react';
 
@@ -84,7 +84,7 @@ export default ${name};
         const routesFilePath = resolve(process.cwd(), 'src', 'routes', 'index.tsx');
         if (fs.existsSync(routesFilePath)) {
           const routesContent = fs.readFileSync(routesFilePath, 'utf-8');
-          const newImport = `const ${name} = lazy(() => import("@/pages/${name}/${name}"));\n`;
+          const newImport = `const ${name} = lazy(() => import("@/pages/${name}/index"));\n`;
           const newRoute = `
   {
     path: "/${name.toLowerCase()}",
