@@ -92,9 +92,10 @@ export default ${name};
     isProtected: false,
   },`;
 
+          // Insert the new import statement at the top of the file
           const updatedContent = routesContent.replace(
             /export const routes: routesTypes\[\] = \[\n/,
-            `export const routes: routesTypes[] = [\n${newImport}${newRoute}`
+            `${newImport}export const routes: routesTypes[] = [\n${newRoute}`
           );
 
           fs.writeFileSync(routesFilePath, updatedContent);
