@@ -2,7 +2,7 @@
   "name": "nexus",
   "version": "1.0.0",
   "description": "Nexus React Framework",
-  "private": true,
+  "private": false,
   "workspaces": [
     "packages/*"
   ],
@@ -17,16 +17,13 @@
   "devDependencies": {
     "@types/change-case": "^2.3.5",
     "@types/handlebars": "^4.1.0",
-    "change-case": "^4.1.2",
-    "handlebars": "^4.7.8",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
+    "change-case": "^4.1.2",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "handlebars": "^4.7.8",
     "husky": "^8.0.0",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
@@ -47,5 +44,10 @@
     "dependency-injection"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "8.35.1",
+    "@typescript-eslint/parser": "8.35.1",
+    "figlet": "1.8.1"
+  }
 }

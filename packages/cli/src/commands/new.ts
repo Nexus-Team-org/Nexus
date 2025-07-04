@@ -8,54 +8,61 @@ export function NewCommand(): Command {
   const command = new Command('new')
     .description('Create a new Nexus application')
     .argument('<name>', 'Name of the application')
-    .action((name: string) => {
-      console.log(chalk.green(`Creating new Nexus application: ${name}`));
+    .action(async (name: string) => {
+      // Display custom Nexus logo
+      console.log(
+        chalk.cyanBright(`
+███╗   ██╗███████╗██╗    ██╗██╗   ██╗███████╗
+████╗  ██║██╔════╝ ██║  ██╔╝██║   ██║██╔════╝
+██╔██╗ ██║█████╗    █████╔╝ ██║   ██║███████╗
+██║╚██╗██║██╔══╝   ██╔  ██╗ ██║   ██║╚════██║
+██║ ╚████║███████╗██║    ██╗╚██████╔╝███████║
+╚═╝  ╚═══╝╚══════╝╚═╝    ╚═╝ ╚═════╝ ╚══════╝
+`)
+      );
 
-      // Resolve template and target paths
+      console.log(chalk.green(`Creating new Nexus application: ${name}\n`));
+
+      // Determine the current directory of this file (ESM import.meta.url)
       const currentFile = new URL(import.meta.url).pathname;
       const currentDir = resolve(currentFile, '..');
 
-      // Try multiple possible template locations
+      // List of potential template locations to try
       const possibleTemplatePaths = [
-        // For local development
         resolve(currentDir, '../../../template'),
-        // For global installation
         resolve(currentDir, '../../../../lib/node_modules/@nexus-dev/cli/template'),
-        // For global installation (alternative path)
         '/usr/local/lib/node_modules/@nexus-dev/cli/template',
-        // For global installation (alternative path)
         '/usr/lib/node_modules/@nexus-dev/cli/template',
       ];
 
-      // Find the first existing template path
+      // Find the first existing template directory
       const templatePath = possibleTemplatePaths.find((path) => fs.existsSync(path));
 
       if (!templatePath) {
-        console.error(chalk.red('Error: Could not find template directory. Tried:'));
-        possibleTemplatePaths.forEach((path) => console.error(`  - ${path}`));
+        console.error(chalk.red('Error: Could not find template directory. Tried these locations:'));
+        possibleTemplatePaths.forEach((path) => console.error(chalk.red(`  - ${path}`)));
         process.exit(1);
       }
 
+      // Resolve target directory path based on input name
       const targetPath = name === '.' ? process.cwd() : resolve(process.cwd(), name);
 
-      // Check if target directory exists and is empty
+      // Check if target directory exists and handle errors
       if (fs.existsSync(targetPath)) {
         if (name === '.') {
-          // For current directory, check if it's empty
           const files = fs.readdirSync(targetPath);
           if (files.length > 0) {
-            console.error(chalk.red(`Error: Current directory is not empty`));
+            console.error(chalk.red('Error: Current directory is not empty.'));
             process.exit(1);
           }
         } else {
-          console.error(chalk.red(`Error: Directory ${name} already exists`));
+          console.error(chalk.red(`Error: Directory "${name}" already exists.`));
           process.exit(1);
         }
       }
 
-      console.log(chalk.blue('Copying template files...'));
+      console.log(chalk.blue('📁 Copying template files...'));
 
-      // Copy template files
       try {
         fs.copySync(templatePath, targetPath, {
           overwrite: false,
@@ -63,7 +70,7 @@ export function NewCommand(): Command {
           preserveTimestamps: true,
         });
 
-        // Update package.json name
+        // Update package.json with new project name
         const packageJsonPath = join(targetPath, 'package.json');
         if (fs.existsSync(packageJsonPath)) {
           const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
@@ -71,31 +78,27 @@ export function NewCommand(): Command {
           fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
         }
       } catch (error) {
-        console.error(
-          chalk.red(
-            `Error copying template files: ${
-              error instanceof Error ? error.message : String(error)
-            }`
-          )
-        );
+        console.error(chalk.red(`Error copying template files: ${error instanceof Error ? error.message : String(error)}`));
         process.exit(1);
       }
 
-      // Change to the project directory
+      // Change working directory to the new project folder
       process.chdir(targetPath);
 
-      // Install dependencies
-      console.log(chalk.blue('Installing dependencies...'));
-      const installCmd = shell.exec('npm install');
-      if (installCmd.code !== 0) {
-        console.error(chalk.red('Error installing dependencies'));
+      console.log(chalk.blue('📦 Installing dependencies (this may take a moment)...'));
+      const installResult = shell.exec('npm install');
+
+      if (installResult.code !== 0) {
+        console.error(chalk.red('Error: Failed to install dependencies.'));
         process.exit(1);
       }
 
-      console.log(chalk.green(`\n✅ Success! Created ${name} at ${join(process.cwd(), name)}`));
-      console.log('\nTo get started, run:');
-      console.log(`  cd ${name}`);
-      console.log('  npm start\n');
+      console.log(chalk.green(`\n✅ Success! Created Nexus app "${name}" at:`));
+      console.log(chalk.yellow(`  ${targetPath}\n`));
+
+      console.log('Next steps:');
+      console.log(chalk.cyan(`  cd ${name === '.' ? '.' : name}`));
+      console.log(chalk.cyan('  npm start\n'));
     });
 
   return command;
