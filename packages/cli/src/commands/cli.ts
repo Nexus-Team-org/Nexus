@@ -84,7 +84,7 @@ export default ${name};
         const routesFilePath = resolve(process.cwd(), 'src', 'routes', 'index.tsx');
         if (fs.existsSync(routesFilePath)) {
           const routesContent = fs.readFileSync(routesFilePath, 'utf-8');
-          const newImport = `import ${name} from '@/pages/${name}/${name}';\n`;
+          const newImport = `const ${name} = lazy(() => import("@/pages/${name}/${name}"));\n`;
           const newRoute = `
   {
     path: "/${name.toLowerCase()}",
