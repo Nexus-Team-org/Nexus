@@ -17,7 +17,7 @@ interface UserState {
 const initialState: UserState = {
   user: null,
   token: null,
-  isAuthenticated: true,
+  isAuthenticated: false,
 };
 
 export const userSlice = createSlice({
