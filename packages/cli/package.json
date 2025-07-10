@@ -1,12 +1,12 @@
 {
-  "name": "@nexus-dev/cli",
-  "version": "0.2.26",
-  "description": "CLI for Nexus React framework",
+  "name": "@okami-team/cli",
+  "version": "0.1.0",
+  "description": "CLI for Okami React framework",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "nexus": "./dist/index.js"
+    "okami": "./dist/index.js"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -76,12 +76,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/AnasEchoFanani/Nexus.git"
+    "url": "git+https://github.com/okami-team/okami.git"
   },
   "bugs": {
-    "url": "https://github.com/AnasEchoFanani/Nexus/issues"
+    "url": "https://github.com/okami-team/okami/issues"
   },
-  "author": "Nexus",
+  "homepage": "https://github.com/okami-team/okami#readme",
+  "author": "Okami Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

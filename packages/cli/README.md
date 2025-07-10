@@ -1,10 +1,10 @@
-# Nexus CLI
+# Okami CLI
 
-The official command-line interface for Nexus, a modern framework that brings Angular-like features to React. This CLI helps you quickly scaffold and manage your Nexus applications.
+The official command-line interface for Okami, a modern framework that brings Angular-like features to React. This CLI helps you quickly scaffold and manage your Okami applications.
 
 ## Features
 
-- **Project Generation**: Create new Nexus projects with a single command
+- **Project Generation**: Create new Okami projects with a single command
 - **Component Generation**: Quickly generate components with decorators
 - **Service Generation**: Create injectable services with the DI container
 - **Page Generation**: Generate page components with routing setup
@@ -16,7 +16,7 @@ The official command-line interface for Nexus, a modern framework that brings An
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g @nexus-dev/cli
+npm install -g @okami-team/cli
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ npm install -g @nexus-dev/cli
 ### Create a New Project
 
 ```bash
-nexus new my-app
+okami new my-app
 cd my-app
 npm run dev
 ```

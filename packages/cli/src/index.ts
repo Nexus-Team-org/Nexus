@@ -28,8 +28,8 @@ async function main() {
   const program = new Command();
 
   program
-    .name('nexus')
-    .description('Nexus CLI for React applications with Angular-like features')
+    .name('okami')
+    .description('Okami CLI for React applications with Angular-like features')
     .version(version, '-v, --version', 'output the current version');
 
   // Register commands

@@ -1,9 +1,9 @@
 <div align="center">
-  <h1>Nexus</h1>
+  <h1>Okami</h1>
   <p>A modern framework for building scalable React applications with TypeScript, Redux Toolkit, and Vite.</p>
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![npm version](https://img.shields.io/npm/v/@nexus-dev/cli.svg)](https://www.npmjs.com/package/@nexus-dev/cli)
+  [![npm version](https://img.shields.io/npm/v/@okami-team/cli.svg)](https://www.npmjs.com/package/@okami-team/cli)
   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -36,11 +36,11 @@
 
 ```bash
 # Using npx
-npx @nexus-dev/cli new my-app
+npx @okami-team/cli new my-app
 
 # Or install globally
-npm install -g @nexus-dev/cli
-nexus new my-app
+npm install -g @okami-team/cli
+okami new my-app
 
 # Navigate to project
 cd my-app
@@ -170,7 +170,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Learn More
 
-- [Nexus Documentation](https://nexus-docs.example.com)
+- [Okami Documentation](https://okami-docs.example.com)
 - [React Documentation](https://reactjs.org/)
 - [Redux Toolkit Documentation](https://redux-toolkit.js.org/)
 - [React Router Documentation](https://reactrouter.com/)
