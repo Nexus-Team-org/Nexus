@@ -1,0 +1,8 @@
+import type { RootState } from '@/app/store';
+
+// Basic selectors
+export const select<%=pascalCase(name)%> = (state: RootState) => state.<%=camelCase(name)%>.data;
+export const select<%=pascalCase(name)%>Loading = (state: RootState) => state.<%=camelCase(name)%>.loading;
+export const select<%=pascalCase(name)%>Error = (state: RootState) => state.<%=camelCase(name)%>.error;
+
+// Add more complex selectors as needed

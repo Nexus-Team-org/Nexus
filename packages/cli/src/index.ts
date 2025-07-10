@@ -6,6 +6,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { NewCommand } from './commands/new.js';
 import { CreatePageCommand } from './commands/cli.js';
+import { CreateReduxCommand } from './commands/createRedux.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,6 +35,7 @@ async function main() {
   // Register commands
   program.addCommand(NewCommand());
   program.addCommand(CreatePageCommand());
+  program.addCommand(CreateReduxCommand());
 
   // Show help if no arguments
   if (process.argv.length <= 2) {

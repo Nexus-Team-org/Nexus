@@ -1,159 +1,60 @@
-# Nexus
+# Nexus CLI
 
-Nexus is a modern framework that brings Angular-like features to React, including decorators, dependency injection, and a powerful CLI, built with TypeScript and ES modules. It provides a structured way to build scalable React applications with a familiar Angular-like development experience.
+The official command-line interface for Nexus, a modern framework that brings Angular-like features to React. This CLI helps you quickly scaffold and manage your Nexus applications.
 
 ## Features
 
-- **Component Decorators**: Use `@Component` to define your React components with templates
-- **Dependency Injection**: Built-in DI container with `@Injectable` decorator
-- **Module System**: Organize your application with `@Module`
-- **CLI Tools**: Generate components, services, and more with the Nexus CLI
-- **TypeScript First**: Built with TypeScript for better developer experience
-- **ES Modules**: Modern JavaScript modules for better tree-shaking and performance
+- **Project Generation**: Create new Nexus projects with a single command
+- **Component Generation**: Quickly generate components with decorators
+- **Service Generation**: Create injectable services with the DI container
+- **Page Generation**: Generate page components with routing setup
+- **Redux Integration**: Generate Redux slices with RTK Query support
+- **TypeScript Ready**: Full TypeScript support out of the box
 
-## Prerequisites
+## Installation
 
-- Node.js 18+ (LTS recommended)
-- npm 9+ or yarn 1.22+
-- TypeScript 5.0+
-- Git (for version control)
-
-## Getting Started
-
-### Installation
-
-#### Option 1: Global Installation (Recommended)
-
-Install the Nexus CLI globally to use it from anywhere:
+### Global Installation (Recommended)
 
 ```bash
 npm install -g @nexus-dev/cli
+```
 
-# Verify installation
-nexus --version
+## Usage
 
-# Create a new application
+### Create a New Project
+
+```bash
 nexus new my-app
 cd my-app
-npm install
 npm run dev
 ```
 
-#### Option 2: Using npx (No Installation)
-
-If you prefer not to install globally, you can use npx:
+### Generate a new page
 
 ```bash
-# Create a new application without global installation
-npx @nexus-dev/cli new my-app
-cd my-app
-npm install
-npm run dev
+nexus create-page PageName
 ```
 
-### Project Structure
-
-When you create a new Nexus application, you'll get the following structure:
+### Generate a new Redux slice
 
 ```bash
-my-app/
-├── public/                  # Static files
-│   └── index.html           # Main HTML template
-├── src/
-│   ├── components/         # Shared components
-│   ├── pages/               # Page components
-│   ├── services/            # Services with @Injectable
-│   ├── styles/              # Global styles
-│   ├── App.tsx              # Root component
-│   └── index.tsx            # Application entry point
-├── .gitignore
-├── package.json
-├── tsconfig.json            # TypeScript configuration
-└── vite.config.ts           # Vite configuration
+# Basic Redux slice
+nexus create-redux featureName
+
+# With RTK Query API integration
+nexus create-redux featureName --with-api
 ```
 
-### Components
-
-```typescript
-import React from 'react';
-import { Component } from '@nexus/core';
-
-@Component({
-  selector: 'app-user-profile',
-  template: `
-    <div>
-      <h2>{{ user.name }}</h2>
-      <p>{{ user.email }}</p>
-    </div>
-  `,
-})
-export class UserProfile extends React.Component {
-  user = {
-    name: 'John Doe',
-    email: 'john@example.com',
-  };
-
-  render() {
-    return null; // Template is handled by the decorator
-  }
-}
+This will create the following structure:
 ```
-
-### Services
-
-```typescript
-import { Injectable } from '@nexus/core';
-
-@Injectable()
-export class UserService {
-  private users = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-  ];
-
-  getUsers() {
-    return this.users;
-  }
-
-  getUser(id: number) {
-    return this.users.find((user) => user.id === id);
-  }
-}
-```
-
-### Modules
-
-```typescript
-import { Module } from '@nexus/core';
-import { UserProfile } from './user-profile.component';
-import { UserService } from './user.service';
-
-@Module({
-  declarations: [UserProfile],
-  providers: [UserService],
-})
-export class UserModule {}
-```
-
-## CLI Commands
-
-Generate different parts of your application:
-
-```bash
-# Generate a component
-nexus g component UserProfile
-
-# Generate a service
-nexus g service UserService
-
-# Generate a module
-nexus g module User
-
-# Generate a view with routing
-nexus g view Dashboard --route=/dashboard
-
-# Alternative full command
-nexus generate view Dashboard --route=/dashboard
+src/
+└── features/
+    └── featureName/
+        ├── featureNameSlice.ts  # Redux slice with actions & reducers
+        ├── types.ts            # TypeScript type definitions
+        ├── selectors.ts        # Selector functions
+        ├── api.ts              # RTK Query API (if --with-api flag is used)
+        └── index.ts            # Barrel file for clean exports
 ```
 
 ## License

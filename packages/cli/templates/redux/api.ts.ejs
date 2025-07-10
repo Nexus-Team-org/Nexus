@@ -1,0 +1,42 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RootState } from '@/app/store';
+
+// Define a service using a base URL and expected endpoints
+export const <%= camelCase(name) %>Api = createApi({
+  reducerPath: '<%= name %>Api',
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+    prepareHeaders: (headers, { getState }) => {
+      // Add the authorization header if we have a token
+      const token = (getState() as RootState).auth?.token;
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['<%= pascalCase(name) %>'],
+  endpoints: (builder) => ({
+    // Example endpoint - customize as needed
+    get<%= pascalCase(name) %>: builder.query<any, string>({
+      query: (id) => `/<%= name %>/${id}`,
+      providesTags: (result, error, id) => [{ type: '<%= pascalCase(name) %>', id }],
+    }),
+    
+    // Add more endpoints as needed
+    create<%= pascalCase(name) %>: builder.mutation<any, Partial<any>>({
+      query: (body) => ({
+        url: '/<%= name %>',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['<%= pascalCase(name) %>'],
+    }),
+  }),
+});
+
+// Export hooks for usage in functional components
+export const { 
+  useGet<%= pascalCase(name) %>Query,
+  useCreate<%= pascalCase(name) %>Mutation,
+} = <%= camelCase(name) %>Api;

@@ -1,0 +1,14 @@
+// Export the reducer as default
+export { default } from './<%=name%>Slice';
+
+// Export actions
+export * from './<%=name%>Slice';
+
+// Export selectors
+export * from './selectors';
+
+// Export types
+export * from './types';
+
+// Export API if it exists
+<%= withApi ? "export * from './api';" : "" %>

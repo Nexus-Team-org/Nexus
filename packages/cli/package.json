@@ -1,6 +1,6 @@
 {
   "name": "@nexus-dev/cli",
-  "version": "0.1.9",
+  "version": "0.2.16",
   "description": "CLI for Nexus React framework",
   "type": "module",
   "main": "dist/index.js",
@@ -13,7 +13,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-templates",
+    "copy-templates": "npx cpx2 \"{templates,template}/**/*\" dist/",
     "dev": "tsc -w --preserveWatchOutput",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "npm test -- --watch",
@@ -44,6 +45,7 @@
     "@types/shelljs": "^0.8.15",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
+    "cpx2": "8.0.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.1",
@@ -58,6 +60,9 @@
     "templates",
     "template"
   ],
+  "directories": {
+    "templates": "templates"
+  },
   "engines": {
     "node": ">=16.0.0"
   },

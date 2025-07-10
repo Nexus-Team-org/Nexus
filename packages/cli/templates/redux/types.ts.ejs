@@ -1,0 +1,26 @@
+/**
+ * State shape for the <%= name %> feature
+ */
+export interface <%=pascalCase(name)%>State {
+  /** The main data for this feature */
+  data: any | null;
+  
+  /** Whether the data is currently being loaded */
+  loading: boolean;
+  
+  /** Error message if something went wrong */
+  error: string | null;
+}
+
+/**
+ * Type for the root state that includes this feature's state
+ * Add this to your root state interface in @/app/store.ts
+ * 
+ * @example
+ * ```typescript
+ * export interface RootState {
+ *   // ... other state slices
+ *   <%=camelCase(name)%>: <%=pascalCase(name)%>State;
+ * }
+ * ```
+ */

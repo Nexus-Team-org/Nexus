@@ -1,0 +1,40 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '@/app/store';
+import type { <%=pascalCase(name)%>State } from './types';
+
+const initialState: <%=pascalCase(name)%>State = {
+  data: null,
+  loading: false,
+  error: null,
+};
+
+export const <%=camelCase(name)%>Slice = createSlice({
+  name: '<%=name%>',
+  initialState,
+  reducers: {
+    set<%=pascalCase(name)%>: (state, action: PayloadAction<any>) => {
+      state.data = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    reset<%=pascalCase(name)%>: () => initialState,
+  },
+});
+
+// Export actions
+export const {
+  set<%=pascalCase(name)%>,
+  setLoading,
+  setError,
+  reset<%=pascalCase(name)%>,
+} = <%=camelCase(name)%>Slice.actions;
+
+// Export the reducer
+export default <%=camelCase(name)%>Slice.reducer;
