@@ -1,6 +1,6 @@
-# Nexus Application
+# Okami Application
 
-This project was generated with [Nexus CLI](https://github.com/your-org/nexus).
+This project was generated with [Okami CLI](https://github.com/your-org/okami).
 
 ## Features
 
@@ -118,7 +118,7 @@ This project is configured to be deployed to Vercel, Netlify, or any static host
 
 ## Learn More
 
-- [Nexus Documentation](https://nexus-docs.example.com)
+- [Okami Documentation](https://okami-docs.example.com)
 - [React Documentation](https://reactjs.org/)
 - [Redux Toolkit Documentation](https://redux-toolkit.js.org/)
 - [React Router Documentation](https://reactrouter.com/)

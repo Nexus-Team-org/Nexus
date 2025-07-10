@@ -1,7 +1,7 @@
 {
-  "name": "nexus",
+  "name": "okami",
   "version": "1.0.0",
-  "description": "Nexus React Framework",
+  "description": "Okami React Framework",
   "private": false,
   "workspaces": [
     "packages/*"
