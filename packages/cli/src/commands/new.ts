@@ -25,15 +25,25 @@ export function NewCommand(): Command {
 
       // Determine the current directory of this file (ESM import.meta.url)
       const currentFile = new URL(import.meta.url).pathname;
-      const currentDir = resolve(currentFile, '..');
+      // Handle Windows paths (remove leading slash if present and convert forward slashes)
+      const normalizedPath = process.platform === 'win32' 
+        ? currentFile.replace(/^\/|\/$/g, '').replace(/\//g, '\\')
+        : currentFile;
+      const currentDir = resolve(normalizedPath, '..');
+
+      // Get the global node_modules path
+      const globalNodeModules = resolve(process.execPath, '../../node_modules');
+      const localNodeModules = resolve(process.cwd(), 'node_modules');
 
       // List of potential template locations to try
       const possibleTemplatePaths = [
         resolve(currentDir, '../../../template'),
-        resolve(currentDir, '../../../../lib/node_modules/@nexus-dev/cli/template'),
+        resolve(globalNodeModules, '@nexus-dev/cli/template'),
+        resolve(localNodeModules, '@nexus-dev/cli/template'),
+        resolve(process.cwd(), 'node_modules/@nexus-dev/cli/template'),
         '/usr/local/lib/node_modules/@nexus-dev/cli/template',
         '/usr/lib/node_modules/@nexus-dev/cli/template',
-      ];
+      ].filter(Boolean);
 
       // Find the first existing template directory
       const templatePath = possibleTemplatePaths.find((path) => fs.existsSync(path));
