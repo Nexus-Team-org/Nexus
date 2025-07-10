@@ -223,9 +223,14 @@ async function findTemplatesDirectory(): Promise<string> {
     // Development
     join(__dirname, '../../templates/redux'),
     join(__dirname, '../templates/redux'),
-    // Installed
-    join(__dirname, '../node_modules/@nexus-dev/cli/dist/templates/redux'),
-    join(process.cwd(), 'node_modules/@nexus-dev/cli/dist/templates/redux')
+    // Installed globally
+    join(pathDirname(process.execPath), '../lib/node_modules/@nexus-dev/cli/dist/templates/redux'),
+    // Installed locally
+    join(process.cwd(), 'node_modules/@nexus-dev/cli/dist/templates/redux'),
+    // For npm/yarn workspaces
+    join(__dirname, '..', '..', '..', '..', 'node_modules', '@nexus-dev', 'cli', 'dist', 'templates', 'redux'),
+    // For global install on Windows
+    join(pathDirname(process.execPath), 'node_modules/@nexus-dev/cli/dist/templates/redux')
   ];
   
   for (const dir of possibleDirs) {
@@ -235,7 +240,8 @@ async function findTemplatesDirectory(): Promise<string> {
   }
   
   throw new ReduxGeneratorError(
-    'Could not find templates directory. Tried:\n' + possibleDirs.join('\n')
+    'Could not find templates directory. Tried:\n' + possibleDirs.join('\n') +
+    '\n\nPlease make sure @nexus-dev/cli is properly installed.'
   );
 }
 
@@ -321,7 +327,8 @@ async function updateStoreConfig(cwd: string, sourceDir: string, data: TemplateD
         
         return;
       } catch (error) {
-        logger.warn(`Failed to update store configuration: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        logger.warn(`Failed to update store configuration: ${errorMessage}`);
       }
     }
   }
