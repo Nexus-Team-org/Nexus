@@ -2,6 +2,11 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import { basename, join, resolve } from 'path';
+
+// Helper function to escape special regex characters
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 import shell from 'shelljs';
 
 export function CreatePageCommand(): Command {
@@ -17,15 +22,32 @@ Creating a new page: ${name}
 
       // Determine the current directory of this file (ESM import.meta.url)
       const currentFile = new URL(import.meta.url).pathname;
-      const currentDir = resolve(currentFile, '..');
+      // Handle Windows paths (remove leading slash if present and convert forward slashes)
+      const normalizedPath = process.platform === 'win32' 
+        ? currentFile.replace(/^\/|\/$/g, '').replace(/\//g, '\\')
+        : currentFile;
+      const currentDir = resolve(normalizedPath, '..');
 
       // List of potential template locations to try
       const possibleTemplatePaths = [
+        // Development
         resolve(currentDir, '../../../template'),
-        resolve(currentDir, '../../../../lib/node_modules/@nexus-dev/cli/template'),
+        // Global install (Windows)
+        resolve(process.execPath, '../../node_modules/@nexus-dev/cli/template'),
+        // Global install (Windows alternative)
+        resolve(process.env.APPDATA || '', 'npm/node_modules/@nexus-dev/cli/template'),
+        // Local install
+        resolve(process.cwd(), 'node_modules/@nexus-dev/cli/template'),
+        // Global install (Unix-like)
         '/usr/local/lib/node_modules/@nexus-dev/cli/template',
         '/usr/lib/node_modules/@nexus-dev/cli/template',
-      ];
+        // For npm/yarn workspaces - use current file's location to find node_modules
+        resolve(currentDir, '..', '..', '..', 'node_modules', '@nexus-dev', 'cli', 'template'),
+        // Another common global location on Windows
+        'C:\\Program Files\\nodejs\\node_modules\\@nexus-dev\\cli\\template',
+        // Fallback to the directory where the CLI is installed
+        resolve(process.execPath, '..', '..', 'lib', 'node_modules', '@nexus-dev', 'cli', 'template')
+      ].filter(Boolean);
 
       // Find the first existing template directory
       const templatePath = possibleTemplatePaths.find((path) => fs.existsSync(path));
@@ -83,22 +105,69 @@ export default ${name};
         // Update the routes file to include the new page
         const routesFilePath = resolve(process.cwd(), 'src', 'routes', 'index.tsx');
         if (fs.existsSync(routesFilePath)) {
-          const routesContent = fs.readFileSync(routesFilePath, 'utf-8');
-          const newImport = `const ${name} = lazy(() => import("@/pages/${name}/index"));\n`;
-          const newRoute = `
-  {
+          let routesContent = fs.readFileSync(routesFilePath, 'utf-8');
+          
+          // Check if the route already exists to avoid duplicates
+          if (routesContent.includes(`path: "/${name.toLowerCase()}"`)) {
+            console.log(chalk.yellow(`ℹ️  Route for "${name}" already exists`));
+          } else {
+            const newImport = `const ${name} = lazy(() => import("@/pages/${name}/index"));\n`;
+            const newRoute = `  {
     path: "/${name.toLowerCase()}",
     component: ${name},
     isProtected: false,
-  },`;
+  },\n`;
 
-          // Insert the new import statement at the top of the file
-          const updatedContent = routesContent.replace(
-            /export const routes: routesTypes\[\] = \[\n/,
-            `${newImport}export const routes: routesTypes[] = [\n${newRoute}`
-          );
+            // Add the new import if it doesn't exist
+            if (!routesContent.includes(`const ${name} =`)) {
+              // Add the import right after the existing imports
+              const importsEnd = routesContent.indexOf('export const routes');
+              if (importsEnd !== -1) {
+                const beforeImports = routesContent.substring(0, importsEnd);
+                const afterImports = routesContent.substring(importsEnd);
+                routesContent = `${beforeImports}${newImport}${afterImports}`;
+              } else {
+                // Fallback: Add at the top of the file
+                routesContent = `${newImport}\n${routesContent}`;
+              }
+            }
 
-          fs.writeFileSync(routesFilePath, updatedContent);
+            // Find the routes array and get its content
+            const routesArrayMatch = routesContent.match(/export const routes: routesTypes\[\] = \[(.*?)\];/s);
+            
+            if (routesArrayMatch) {
+              const routesArrayContent = routesArrayMatch[1];
+              const lastRouteMatch = routesArrayContent.match(/(\{[^}]*\})\s*(?:,|$)/gs)?.pop()?.trim();
+              
+              if (lastRouteMatch) {
+                // Insert new route after the last route
+                const newRoutesArrayContent = routesArrayContent.replace(
+                  new RegExp(escapeRegExp(lastRouteMatch)),
+                  `${lastRouteMatch}\n  ${newRoute.trim()}`
+                );
+                routesContent = routesContent.replace(
+                  /(export const routes: routesTypes\[\] = \[)(.*?)(\];)/s,
+                  `$1${newRoutesArrayContent}$3`
+                );
+              } else {
+                // No routes found, add as first route
+                routesContent = routesContent.replace(
+                  /(export const routes: routesTypes\[\] = \[)\s*(\];)/,
+                  `$1\n  ${newRoute.trim()}$2`
+                );
+              }
+            } else {
+              // Fallback if we can't find the routes array
+              console.log(chalk.yellow('⚠️  Could not find routes array, adding at the end of file'));
+              routesContent = routesContent.replace(
+                /(\];?\s*$)/,
+                `\n${newRoute}$1`
+              );
+            }
+
+            fs.writeFileSync(routesFilePath, routesContent);
+            console.log(chalk.green(`✅ Added route for "${name}"`));
+          }
         }
       } catch (error) {
         console.error(chalk.red(`Error creating page: ${error instanceof Error ? error.message : String(error)}`));
@@ -109,7 +178,7 @@ export default ${name};
       console.log(chalk.yellow(`  ${targetPath}\n`));
 
       console.log('Next steps:');
-      console.log(chalk.cyan(`  npm start\n`));
+      console.log(chalk.cyan(`  npm run dev\n`));
     });
 
   return command;

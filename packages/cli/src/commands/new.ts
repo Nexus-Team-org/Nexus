@@ -37,12 +37,23 @@ export function NewCommand(): Command {
 
       // List of potential template locations to try
       const possibleTemplatePaths = [
+        // Development
         resolve(currentDir, '../../../template'),
-        resolve(globalNodeModules, '@nexus-dev/cli/template'),
-        resolve(localNodeModules, '@nexus-dev/cli/template'),
+        // Global install (Windows)
+        resolve(process.execPath, '../../node_modules/@nexus-dev/cli/template'),
+        // Global install (Windows alternative)
+        resolve(process.env.APPDATA || '', 'npm/node_modules/@nexus-dev/cli/template'),
+        // Local install
         resolve(process.cwd(), 'node_modules/@nexus-dev/cli/template'),
+        // Global install (Unix-like)
         '/usr/local/lib/node_modules/@nexus-dev/cli/template',
         '/usr/lib/node_modules/@nexus-dev/cli/template',
+        // For npm/yarn workspaces - use current file's location to find node_modules
+        resolve(currentDir, '..', '..', '..', 'node_modules', '@nexus-dev', 'cli', 'template'),
+        // Another common global location on Windows
+        'C:\\Program Files\\nodejs\\node_modules\\@nexus-dev\\cli\\template',
+        // Fallback to the directory where the CLI is installed
+        resolve(process.execPath, '..', '..', 'lib', 'node_modules', '@nexus-dev', 'cli', 'template')
       ].filter(Boolean);
 
       // Find the first existing template directory
@@ -108,7 +119,7 @@ export function NewCommand(): Command {
 
       console.log('Next steps:');
       console.log(chalk.cyan(`  cd ${name === '.' ? '.' : name}`));
-      console.log(chalk.cyan('  npm start\n'));
+      console.log(chalk.cyan('  npm run dev\n'));
     });
 
   return command;
