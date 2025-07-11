@@ -6,22 +6,22 @@ import shell from 'shelljs';
 
 export function NewCommand(): Command {
   const command = new Command('new')
-    .description('Create a new Nexus application')
+    .description('Create a new Okami application')
     .argument('<name>', 'Name of the application')
     .action(async (name: string) => {
-      // Display custom Nexus logo
+      // Display custom Okami logo
       console.log(
         chalk.cyanBright(`
-███╗   ██╗███████╗██╗    ██╗██╗   ██╗███████╗
-████╗  ██║██╔════╝ ██║  ██╔╝██║   ██║██╔════╝
-██╔██╗ ██║█████╗    █████╔╝ ██║   ██║███████╗
-██║╚██╗██║██╔══╝   ██╔  ██╗ ██║   ██║╚════██║
-██║ ╚████║███████╗██║    ██╗╚██████╔╝███████║
-╚═╝  ╚═══╝╚══════╝╚═╝    ╚═╝ ╚═════╝ ╚══════╝
+ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
+██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
+██║   ██║█████╔╝ ███████║██╔████╔██║██║
+██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
+╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
+ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
 `)
       );
 
-      console.log(chalk.green(`Creating new Nexus application: ${name}\n`));
+      console.log(chalk.green(`Creating new Okami application: ${name}\n`));
 
       // Determine the current directory of this file (ESM import.meta.url)
       const currentFile = new URL(import.meta.url).pathname;
@@ -40,20 +40,20 @@ export function NewCommand(): Command {
         // Development
         resolve(currentDir, '../../../template'),
         // Global install (Windows)
-        resolve(process.execPath, '../../node_modules/@nexus-dev/cli/template'),
+        resolve(process.execPath, '../../node_modules/@okami-team/cli/template'),
         // Global install (Windows alternative)
-        resolve(process.env.APPDATA || '', 'npm/node_modules/@nexus-dev/cli/template'),
+        resolve(process.env.APPDATA || '', 'npm/node_modules/@okami-team/cli/template'),
         // Local install
-        resolve(process.cwd(), 'node_modules/@nexus-dev/cli/template'),
+        resolve(process.cwd(), 'node_modules/@okami-team/cli/template'),
         // Global install (Unix-like)
-        '/usr/local/lib/node_modules/@nexus-dev/cli/template',
-        '/usr/lib/node_modules/@nexus-dev/cli/template',
+        '/usr/local/lib/node_modules/@okami-team/cli/template',
+        '/usr/lib/node_modules/@okami-team/cli/template',
         // For npm/yarn workspaces - use current file's location to find node_modules
-        resolve(currentDir, '..', '..', '..', 'node_modules', '@nexus-dev', 'cli', 'template'),
+        resolve(currentDir, '..', '..', '..', 'node_modules', '@okami-team', 'cli', 'template'),
         // Another common global location on Windows
-        'C:\\Program Files\\nodejs\\node_modules\\@nexus-dev\\cli\\template',
-        // Fallback to the directory where the CLI is installed
-        resolve(process.execPath, '..', '..', 'lib', 'node_modules', '@nexus-dev', 'cli', 'template')
+        'C:\\Program Files\\nodejs\\node_modules\\@okami-team\\cli\\template',
+        // Another common global location on Unix-like
+        resolve(process.execPath, '..', '..', 'lib', 'node_modules', '@okami-team', 'cli', 'template')
       ].filter(Boolean);
 
       // Find the first existing template directory
@@ -114,7 +114,7 @@ export function NewCommand(): Command {
         process.exit(1);
       }
 
-      console.log(chalk.green(`\n✅ Success! Created Nexus app "${name}" at:`));
+      console.log(chalk.green(`\n✅ Success! Created Okami app "${name}" at:`));
       console.log(chalk.yellow(`  ${targetPath}\n`));
 
       console.log('Next steps:');

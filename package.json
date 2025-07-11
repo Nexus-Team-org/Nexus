@@ -1,11 +1,7 @@
 {
-<<<<<<< Updated upstream
-  "name": "nexus",
-=======
   "name": "@okami-team/cli",
->>>>>>> Stashed changes
   "version": "1.0.0",
-  "description": "Nexus React Framework",
+  "description": "Okami React Framework",
   "private": false,
   "workspaces": [
     "packages/*"
