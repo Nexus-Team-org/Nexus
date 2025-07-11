@@ -1,5 +1,5 @@
 {
-  "name": "okami",
+  "name": "@okami-team/cli",
   "version": "1.0.0",
   "description": "Okami React Framework",
   "private": false,
@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/nexus.git"
+    "url": "git+https://github.com/okami-team/okami.git"
   },
   "keywords": [
     "react",

@@ -9,15 +9,30 @@ function escapeRegExp(string: string) {
 }
 import shell from 'shelljs';
 
+function findProjectRoot(currentPath: string): string | null {
+  const root = require('path').parse(currentPath).root;
+  let current = currentPath;
+  
+  while (current !== root) {
+    const pagesPath = require('path').join(current, 'src', 'pages');
+    if (require('fs').existsSync(pagesPath)) {
+      return current;
+    }
+    current = require('path').dirname(current);
+  }
+  return null;
+}
+
 export function CreatePageCommand(): Command {
   const command = new Command('create-page')
     .description('Create a new page with associated files in existing directories')
+    .option('--force', 'Force creation even if not in project root', false)
     .argument('<name>', 'Name of the page')
-    .action(async (name: string) => {
+    .action(async (name: string, options: { force?: boolean }) => {
       // Display custom message
       console.log(chalk.cyanBright(`
-Creating a new page: ${name}
-`)
+      Creating a new page: ${name}
+      `)
       );
 
       // Determine the current directory of this file (ESM import.meta.url)
@@ -58,8 +73,24 @@ Creating a new page: ${name}
         process.exit(1);
       }
 
+      // Check if we're in the project root or a subdirectory
+      const projectRoot = findProjectRoot(process.cwd());
+      
+      if (!projectRoot && !options.force) {
+        console.error(chalk.red('❌ Error: Could not find project root directory.'));
+        console.error(chalk.yellow('\nPlease run this command from your project root directory (where src/pages exists)'));
+        console.error(chalk.yellow('or use --force to create the page in the current location.'));
+        console.error(chalk.cyan('\nExample:'));
+        console.error(chalk.cyan('  cd /path/to/your/project'));
+        console.error(chalk.cyan('  nexus create-page my-page\n'));
+        process.exit(1);
+      }
+      
+      // Use the project root if found, otherwise use current directory with force flag
+      const baseDir = projectRoot || process.cwd();
+      
       // Resolve target directory path for the new page
-      const pagesDir = resolve(process.cwd(), 'src', 'pages');
+      const pagesDir = resolve(baseDir, 'src', 'pages');
       const targetPath = join(pagesDir, name);
 
       // Check if target directory exists and handle errors
@@ -103,7 +134,7 @@ export default ${name};
 `, 'utf-8');
 
         // Update the routes file to include the new page
-        const routesFilePath = resolve(process.cwd(), 'src', 'routes', 'index.tsx');
+        const routesFilePath = resolve(baseDir, 'src', 'routes', 'index.tsx');
         if (fs.existsSync(routesFilePath)) {
           let routesContent = fs.readFileSync(routesFilePath, 'utf-8');
           
