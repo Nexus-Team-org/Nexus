@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream
   "name": "nexus",
+=======
+  "name": "@okami-team/cli",
+>>>>>>> Stashed changes
   "version": "1.0.0",
   "description": "Nexus React Framework",
   "private": false,
@@ -33,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/nexus.git"
+    "url": "git+https://github.com/okami-team/okami.git"
   },
   "keywords": [
     "react",

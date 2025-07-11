@@ -1,7 +1,13 @@
 {
+<<<<<<< Updated upstream
   "name": "@nexus-dev/cli",
   "version": "0.2.26",
   "description": "CLI for Nexus React framework",
+=======
+  "name": "@okami-team/cli",
+  "version": "0.1.1",
+  "description": "CLI for Okami React framework",
+>>>>>>> Stashed changes
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
