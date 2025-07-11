@@ -1,6 +1,8 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import fs from 'fs-extra';
+import * as nodePath from 'path';
+import * as nodeFs from 'fs';
 import { basename, join, resolve } from 'path';
 
 // Helper function to escape special regex characters
@@ -10,15 +12,28 @@ function escapeRegExp(string: string) {
 import shell from 'shelljs';
 
 function findProjectRoot(currentPath: string): string | null {
-  const root = require('path').parse(currentPath).root;
+  const path = nodePath;
+  const fs = nodeFs;
+  const root = path.parse(currentPath).root;
   let current = currentPath;
-  
+
   while (current !== root) {
-    const pagesPath = require('path').join(current, 'src', 'pages');
-    if (require('fs').existsSync(pagesPath)) {
+    // Case 1: we are at repo root – look for src/pages inside it
+    const pagesInSrc = path.join(current, 'src', 'pages');
+    if (fs.existsSync(pagesInSrc)) {
       return current;
     }
-    current = require('path').dirname(current);
+
+    // Case 2: we are inside the "src" directory – look for pages inside it
+    // If so, the project root is the parent of the current directory
+    if (path.basename(current) === 'src') {
+      const pagesDirect = path.join(current, 'pages');
+      if (fs.existsSync(pagesDirect)) {
+        return path.dirname(current);
+      }
+    }
+
+    current = path.dirname(current);
   }
   return null;
 }
@@ -44,24 +59,25 @@ export function CreatePageCommand(): Command {
       const currentDir = resolve(normalizedPath, '..');
 
       // List of potential template locations to try
+      const packageRoot = resolve(currentDir, '..', '..'); // dist/commands -> dist -> package root
+
       const possibleTemplatePaths = [
-        // Development
-        resolve(currentDir, '../../../template'),
-        // Global install (Windows)
-        resolve(process.execPath, '../../node_modules/@nexus-dev/cli/template'),
-        // Global install (Windows alternative)
-        resolve(process.env.APPDATA || '', 'npm/node_modules/@nexus-dev/cli/template'),
-        // Local install
-        resolve(process.cwd(), 'node_modules/@nexus-dev/cli/template'),
-        // Global install (Unix-like)
-        '/usr/local/lib/node_modules/@nexus-dev/cli/template',
-        '/usr/lib/node_modules/@nexus-dev/cli/template',
-        // For npm/yarn workspaces - use current file's location to find node_modules
-        resolve(currentDir, '..', '..', '..', 'node_modules', '@nexus-dev', 'cli', 'template'),
-        // Another common global location on Windows
-        'C:\\Program Files\\nodejs\\node_modules\\@nexus-dev\\cli\\template',
-        // Fallback to the directory where the CLI is installed
-        resolve(process.execPath, '..', '..', 'lib', 'node_modules', '@nexus-dev', 'cli', 'template')
+        // 1. Inside dist folder when linked locally / compiled
+        resolve(currentDir, '..', 'template'),            // dist/commands -> dist/template
+        resolve(packageRoot, 'template'),                 // packageRoot/template (source copy)
+        resolve(packageRoot, 'dist', 'template'),         // packageRoot/dist/template
+        // 2. When installed globally via npm
+        resolve(process.execPath, '../../node_modules/@okami-team/cli/dist/template'),
+        resolve((process.env.APPDATA || ''), 'npm/node_modules/@okami-team/cli/dist/template'),
+        resolve((process.env.APPDATA || ''), 'npm/node_modules/@okami-team/cli/template'),
+        // 3. Local node_modules of the current project
+        resolve(process.cwd(), 'node_modules/@okami-team/cli/dist/template'),
+        resolve(process.cwd(), 'node_modules/@okami-team/cli/template'),
+        // 4. Common global Unix paths
+        '/usr/local/lib/node_modules/@okami-team/cli/dist/template',
+        '/usr/lib/node_modules/@okami-team/cli/dist/template',
+        // 5. Another common global location on Windows
+        'C:\\Program Files\\nodejs\\node_modules\\@okami-team\\cli\\dist\\template'
       ].filter(Boolean);
 
       // Find the first existing template directory
@@ -74,7 +90,20 @@ export function CreatePageCommand(): Command {
       }
 
       // Check if we're in the project root or a subdirectory
-      const projectRoot = findProjectRoot(process.cwd());
+      let projectRoot = findProjectRoot(process.cwd());
+
+      // Fallback: if running inside "src" folder and pages exist, treat parent as project root
+      if (!projectRoot) {
+        const cwd = process.cwd();
+        const path = nodePath;
+        const fs = nodeFs;
+        if (path.basename(cwd) === 'src') {
+          const maybePages = path.join(cwd, 'pages');
+          if (fs.existsSync(maybePages)) {
+            projectRoot = path.dirname(cwd);
+          }
+        }
+      }
       
       if (!projectRoot && !options.force) {
         console.error(chalk.red('❌ Error: Could not find project root directory.'));

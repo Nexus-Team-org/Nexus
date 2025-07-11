@@ -2,7 +2,7 @@
   "name": "@okami-team/cli",
   "version": "1.0.0",
   "description": "Okami React Framework",
-  "private": false,
+  "private": true,
   "workspaces": [
     "packages/*"
   ],
